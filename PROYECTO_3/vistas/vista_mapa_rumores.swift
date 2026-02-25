@@ -7,12 +7,13 @@
 import SwiftUI
 internal import Combine
 
-
 // mapa de rumores
 struct VistaMapaRumores: View {
     @StateObject private var mapa = MapaRumores()
+    @State private var nodoSeleccionado: NodoRumor? = nil
+    
     @State private var escalaActual: CGFloat = 1.0
-    @State private var escalaFinal: CGFloat = 1.0
+    @State private var escalaFinal: CGFloat = 0.5
     @State private var desplazamientoActual: CGSize = .zero
     @State private var desplazamientoFinal: CGSize = .zero
     
@@ -22,74 +23,107 @@ struct VistaMapaRumores: View {
                 // color de fondo
                 Color(hex: 0x0E1621)
                     .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation {
+                            nodoSeleccionado = nil
+                        }
+                    }
                 
-                ZStack {
-                    
-                    // conexiones
-                    ForEach(mapa.conexiones) { conexion in
-                        if let origen = mapa.rumores.first(where: { $0.id == conexion.origenId }),
-                           let destino = mapa.rumores.first(where: { $0.id == conexion.destinoId }) {
-                            
-                            ConexionRumor(
-                                origen: CGPoint(
-                                    x: (geometria.size.width / 2) + origen.posicion.x,
-                                    y: (geometria.size.height / 2) + origen.posicion.y
-                                ),
-                                destino: CGPoint(
-                                    x: (geometria.size.width / 2) + destino.posicion.x,
-                                    y: (geometria.size.height / 2) + destino.posicion.y
-                                )
-                            )
-                        }
-                    }
-                    
-                    // tarjetas de rumor
-                    ForEach(mapa.rumores) { rumor in
-                        TarjetaRumor(
-                            tituloTarjeta: rumor.titulo,
-                            urlImagen: rumor.urlImagen,
-                            colorTarjeta: rumor.colorTarjeta,
-                            colorSobreTarjeta: rumor.colorSobreTarjeta,
-                            tamaño: rumor.tamaño
-                        )
-                        .position(
-                            x: (geometria.size.width / 2) + rumor.posicion.x,
-                            y: (geometria.size.height / 2) + rumor.posicion.y
-                        )
-                    }
-                }
-                // desplazamiento
-                .offset(
-                    x: desplazamientoActual.width + desplazamientoFinal.width,
-                    y: desplazamientoActual.height + desplazamientoFinal.height
-                )
-                // escala / zoom
-                .scaleEffect(escalaActual * escalaFinal)
+                lienzo(geometria: geometria)
+                    .offset(
+                        x: desplazamientoActual.width + desplazamientoFinal.width,
+                        y: desplazamientoActual.height + desplazamientoFinal.height
+                    )
+                    .scaleEffect(escalaActual * escalaFinal)
+                
+                capaDetalles()
             }
-            .gesture(
-                SimultaneousGesture(
-                    // escala
-                    MagnificationGesture()
-                        .onChanged { valor in
-                            self.escalaActual = valor
-                        }
-                        .onEnded { valor in
-                            self.escalaFinal *= self.escalaActual
-                            self.escalaActual = 1.0
-                        },
-                    // deslizamiento
-                    DragGesture()
-                        .onChanged { valor in
-                            self.desplazamientoActual = valor.translation
-                        }
-                        .onEnded { valor in
-                            self.desplazamientoFinal.width += self.desplazamientoActual.width
-                            self.desplazamientoFinal.height += self.desplazamientoActual.height
-                            self.desplazamientoActual = .zero
-                        }
-                )
-            )
+            .gesture(gestosDelMapa)
         }
+    }
+    
+    // area donde se muestran las tarjetas
+    @ViewBuilder
+    private func lienzo(geometria: GeometryProxy) -> some View {
+        ZStack {
+            // conexiones
+            ForEach(mapa.conexiones) { conexion in
+                if let origen = mapa.rumores.first(where: { $0.id == conexion.origenId }),
+                   let destino = mapa.rumores.first(where: { $0.id == conexion.destinoId }) {
+                    
+                    ConexionRumor(
+                        origen: calcularPosicion(origen.posicion, en: geometria),
+                        destino: calcularPosicion(destino.posicion, en: geometria)
+                    )
+                }
+            }
+            
+            // tarjetas de rumor
+            ForEach(mapa.rumores) { rumor in
+                TarjetaRumor(
+                    estaSeleccionado: nodoSeleccionado?.id == rumor.id,
+                    tituloTarjeta: rumor.titulo,
+                    urlImagen: rumor.urlImagen,
+                    colorTarjeta: rumor.colorTarjeta,
+                    colorSobreTarjeta: rumor.colorSobreTarjeta,
+                    tamaño: rumor.tamaño,
+                    alTocar: {
+                        withAnimation {
+                            if nodoSeleccionado?.id == rumor.id {
+                                nodoSeleccionado = nil
+                            } else {
+                                nodoSeleccionado = rumor
+                            }
+                        }
+                    }
+                )
+                .position(calcularPosicion(rumor.posicion, en: geometria))
+            }
+        }
+    }
+    
+    // panel de detalles
+    @ViewBuilder
+    private func capaDetalles() -> some View {
+        if let seleccionado = nodoSeleccionado, !seleccionado.detalles.isEmpty {
+            VStack {
+                Spacer()
+                DetallesRumor(detalles: seleccionado.detalles)
+                    .padding(.bottom, 40)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+    }
+    
+    // manejo de gestos
+    private var gestosDelMapa: some Gesture {
+        SimultaneousGesture(
+            MagnificationGesture()
+                .onChanged { valor in
+                    self.escalaActual = valor
+                }
+                .onEnded { valor in
+                    self.escalaFinal *= self.escalaActual
+                    self.escalaActual = 1.0
+                },
+            DragGesture()
+                .onChanged { valor in
+                    self.desplazamientoActual = valor.translation
+                }
+                .onEnded { valor in
+                    self.desplazamientoFinal.width += self.desplazamientoActual.width
+                    self.desplazamientoFinal.height += self.desplazamientoActual.height
+                    self.desplazamientoActual = .zero
+                }
+        )
+    }
+    
+    // posicion de la pantalla
+    private func calcularPosicion(_ posicion: CGPoint, en geometria: GeometryProxy) -> CGPoint {
+        CGPoint(
+            x: (geometria.size.width / 2) + posicion.x,
+            y: (geometria.size.height / 2) + posicion.y
+        )
     }
 }
 

@@ -17,4 +17,5 @@ struct NodoRumor: Identifiable {
     let colorSobreTarjeta: Color
     let posicion: CGPoint
     let tamaño: TamañoTarjeta
+    let detalles: [String] 
 }

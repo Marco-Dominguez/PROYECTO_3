@@ -7,13 +7,14 @@
 import SwiftUI
 
 struct TarjetaRumor: View {
-    @State private var estaSeleccionado = false
+    let estaSeleccionado: Bool
     @State private var estaActivo = false
     let tituloTarjeta: String
     let urlImagen: String
     let colorTarjeta: Color
     let colorSobreTarjeta: Color
     let tamaño: TamañoTarjeta
+    let alTocar: () -> Void
     
     var body: some View {
         VStack(spacing:0){
@@ -45,7 +46,7 @@ struct TarjetaRumor: View {
             self.estaActivo = seleccionado
         }
         .onTapGesture {
-            self.estaSeleccionado.toggle()
+            self.alTocar()
         }
         .animation(.easeInOut(duration: 0.2), value: estaSeleccionado)
         .animation(.easeInOut(duration: 0.2), value: estaActivo)
@@ -54,11 +55,11 @@ struct TarjetaRumor: View {
 
 #Preview {
     VStack{
-        TarjetaRumor(tituloTarjeta: "Ash Twin\nProject", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", colorTarjeta: Color(hex: 0xB4764B), colorSobreTarjeta: (Color(hex: 0xFFA768)), tamaño: .grande)
+        TarjetaRumor(estaSeleccionado: true, tituloTarjeta: "Ash Twin\nProject", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", colorTarjeta: Color(hex: 0xB4764B), colorSobreTarjeta: (Color(hex: 0xFFA768)), tamaño: .grande, alTocar: {})
         
-        TarjetaRumor(tituloTarjeta: "Ash Twin\nProject", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", colorTarjeta: Color(hex: 0xB4764B), colorSobreTarjeta: (Color(hex: 0xFFA768)), tamaño: .mediana)
+        TarjetaRumor(estaSeleccionado: false, tituloTarjeta: "Ash Twin\nProject", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", colorTarjeta: Color(hex: 0xB4764B), colorSobreTarjeta: (Color(hex: 0xFFA768)), tamaño: .mediana, alTocar: {})
         
-        TarjetaRumor(tituloTarjeta: "Ash Twin\nProject", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", colorTarjeta: Color(hex: 0xB4764B), colorSobreTarjeta: (Color(hex: 0xFFA768)), tamaño: .pequeña)
+        TarjetaRumor(estaSeleccionado: false, tituloTarjeta: "Ash Twin\nProject", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", colorTarjeta: Color(hex: 0xB4764B), colorSobreTarjeta: (Color(hex: 0xFFA768)), tamaño: .pequeña, alTocar: {})
     }
     
 }
