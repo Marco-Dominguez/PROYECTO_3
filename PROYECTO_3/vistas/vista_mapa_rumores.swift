@@ -28,15 +28,27 @@ struct VistaMapaRumores: View {
                             nodoSeleccionado = nil
                         }
                     }
+                VStack(alignment: .leading) {
+                    // título
+                    Text("Mapa de Rumores")
+                        .font(.system(size: 32, design: .monospaced).bold())
+                        .foregroundColor(Color(hex: 0x81C784))
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 12)
+                        .border(Color(hex: 0x4B6E9B), width: 2)
+                        .padding(.horizontal, 30)
+                        .padding(.top, 20)
+                    
+                    lienzo(geometria: geometria)
+                        .offset(
+                            x: desplazamientoActual.width + desplazamientoFinal.width,
+                            y: desplazamientoActual.height + desplazamientoFinal.height
+                        )
+                        .scaleEffect(escalaActual * escalaFinal)
+                    
+                    capaDetalles()
+                }
                 
-                lienzo(geometria: geometria)
-                    .offset(
-                        x: desplazamientoActual.width + desplazamientoFinal.width,
-                        y: desplazamientoActual.height + desplazamientoFinal.height
-                    )
-                    .scaleEffect(escalaActual * escalaFinal)
-                
-                capaDetalles()
             }
             .gesture(gestosDelMapa)
         }

@@ -19,8 +19,6 @@ struct Planeta: View {
                 .scaledToFill()
                 .frame(width: planeta.tamaño, height: planeta.tamaño)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 3))
-                .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
                 .onTapGesture {
                     alTocar()
                 }

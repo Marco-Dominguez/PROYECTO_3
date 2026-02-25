@@ -27,7 +27,7 @@ enum TamañoTarjeta {
         switch self {
         case .pequeña: return 12
         case .mediana: return 20
-        case .grande: return 30
+        case .grande: return 26
         }
     }
 }
