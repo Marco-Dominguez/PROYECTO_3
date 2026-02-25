@@ -140,7 +140,7 @@ struct VistaDetallesPlaneta: View {
     VistaDetallesPlaneta(
         planeta: PlanetaModelo(
             nombre: "Zarza Oscura",
-            urlImagen: "",
+            imagen: "",
             tamaño: 100,
             ubicaciones: [
                 UbicacionModelo(nombre: "Campamento de Feldespato", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", detalles: ["Feldespato está vivo.", "No quiere volver."])

@@ -5,12 +5,13 @@
 //  Created by Marco Dominguez on 16/02/26.
 //
 import SwiftUI
+import UIKit
 
 struct VistaInicio: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // fondo
+                // Fondo del espacio
                 Color(hex: 0x0E1621)
                     .ignoresSafeArea()
                 
@@ -18,22 +19,10 @@ struct VistaInicio: View {
                     
                     // logo
                     VStack(spacing: 20) {
-                        ZStack {
-                            Image(systemName: "triangle")
-                                .font(.system(size: 140, weight: .ultraLight))
-                                .foregroundColor(.white)
-                            
-                            Image(systemName: "sparkles")
-                                .font(.system(size: 30))
-                                .foregroundColor(.white)
-                                .offset(y: -25)
-                            
-                            Image(systemName: "flame.fill")
-                                .font(.system(size: 50))
-                                .foregroundColor(Color(hex: 0xFFA768))
-                                .offset(y: 15)
-                        }
-                        .frame(height: 160)
+                        Image("LogoOuterWilds")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 160)
                         
                         VStack(spacing: 8) {
                             Text("OUTER WILDS")
@@ -47,28 +36,40 @@ struct VistaInicio: View {
                     }
                     .padding(.top, 40)
                     
-                    // menu
+                    // opciones
                     VStack(spacing: 24) {
-                        NavigationLink(destination: VistaSistemaSolar()) {
+                        NavigationLink(destination: VistaSistemaSolar().navigationBarBackButtonHidden(true)) {
                             BotonMenu(texto: "Sistema Solar", icono: "sun.max.fill")
                         }
                         
-                        NavigationLink(destination: VistaMapaRumores()) {
+                        NavigationLink(destination: VistaMapaRumores().navigationBarBackButtonHidden(true)) {
                             BotonMenu(texto: "Mapa de Rumores", icono: "map.fill")
                         }
                         
-                        NavigationLink(destination: VistaInfoPersonajes()) {
+                        NavigationLink(destination: VistaInfoPersonajes().navigationBarBackButtonHidden(true)) {
                             BotonMenu(texto: "Personajes", icono: "person.3.sequence.fill")
                         }
                     }
                     
                     Spacer()
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding()
             }
             .navigationBarHidden(true)
         }
-        .accentColor(Color(hex: 0xFFA768))
         .navigationViewStyle(.stack)
+    }
+}
+
+extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = self
+    }
+    
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return viewControllers.count > 1
     }
 }
 

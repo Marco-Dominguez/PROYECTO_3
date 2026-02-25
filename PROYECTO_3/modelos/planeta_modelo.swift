@@ -9,7 +9,7 @@ import Foundation
 struct PlanetaModelo: Identifiable {
     let id: String = UUID().uuidString
     let nombre: String
-    let urlImagen: String
+    let imagen: String
     let tamaño: CGFloat
     let ubicaciones: [UbicacionModelo]
 }

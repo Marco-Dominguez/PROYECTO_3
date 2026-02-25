@@ -14,24 +14,16 @@ struct Planeta: View {
         VStack(spacing: 16) {
             
             // imagen
-            AsyncImage(url: URL(string: planeta.urlImagen)) { fase in
-                if let imagen = fase.image {
-                    imagen
-                        .resizable()
-                        .scaledToFill()
-                } else if fase.error != nil {
-                    Color.gray.opacity(0.3)
-                } else {
-                    ProgressView()
+            Image(planeta.imagen)
+                .resizable()
+                .scaledToFill()
+                .frame(width: planeta.tamaño, height: planeta.tamaño)
+                .clipShape(Circle())
+                .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 3))
+                .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
+                .onTapGesture {
+                    alTocar()
                 }
-            }
-            .frame(width: planeta.tamaño, height: planeta.tamaño)
-            .clipShape(Circle())
-            .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 3))
-            .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
-            .onTapGesture {
-                alTocar()
-            }
             
             // título del planeta
             Text(planeta.nombre)
@@ -48,7 +40,7 @@ struct Planeta: View {
     ZStack {
         Color(hex: 0x0E1621).ignoresSafeArea()
         Planeta(
-            planeta: PlanetaModelo(nombre: "Lumbre", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", tamaño: 150, ubicaciones: []),
+            planeta: PlanetaModelo(nombre: "Lumbre", imagen: "sun", tamaño: 150, ubicaciones: []),
             alTocar: {}
         )
     }
