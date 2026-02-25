@@ -9,6 +9,7 @@ import SwiftUI
 
 struct VistaSistemaSolar: View {
     @StateObject private var listaPlanetas = SistemaSolar()
+    @State private var planetaSeleccionado: PlanetaModelo? = nil
     
     var body: some View {
         ZStack {
@@ -33,7 +34,9 @@ struct VistaSistemaSolar: View {
                         HStack(alignment: .center, spacing: 20) {
                             ForEach(listaPlanetas.planetas) { planeta in
                                 Planeta(planeta: planeta) {
-                                    print("planeta: \(planeta.nombre)")
+                                    withAnimation(.easeInOut) {
+                                        planetaSeleccionado = planeta
+                                    }
                                 }
                             }
                         }
@@ -41,6 +44,17 @@ struct VistaSistemaSolar: View {
                         .frame(maxHeight: .infinity)
                     }
                 }
+            }
+            
+            if let planeta = planetaSeleccionado {
+                VistaDetallesPlaneta(planeta: planeta) {
+                    // cerrar
+                    withAnimation(.easeInOut) {
+                        planetaSeleccionado = nil
+                    }
+                }
+                .zIndex(1)
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
             }
         }
     }

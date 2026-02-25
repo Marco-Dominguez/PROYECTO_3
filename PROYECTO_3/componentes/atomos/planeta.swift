@@ -48,7 +48,7 @@ struct Planeta: View {
     ZStack {
         Color(hex: 0x0E1621).ignoresSafeArea()
         Planeta(
-            planeta: PlanetaModelo(nombre: "Lumbre", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", tamaño: 150),
+            planeta: PlanetaModelo(nombre: "Lumbre", urlImagen: "https://outerwilds.ventures/assets/TH_VILLAGE-VoBiOHgy.jpg", tamaño: 150, ubicaciones: []),
             alTocar: {}
         )
     }
