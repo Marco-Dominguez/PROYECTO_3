@@ -1,5 +1,5 @@
 //
-//  tamaños.swift
+//  tamaño_tarjeta.swift
 //  PROYECTO_3
 //
 //  Created by Marco Dominguez on 24/02/26.
